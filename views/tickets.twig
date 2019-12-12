@@ -1,0 +1,57 @@
+{% extends '_layout.twig' %}
+
+{% block scripts %}
+    <script>
+        $(() => {
+            $("#form").on("submit", async (evt) => {
+                evt.preventDefault();
+                const id = $("#ticket").val();
+                const res = await fetch("/api/notifications/tickets/" + id, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json; charset=utf-8",
+                    }
+                });
+                const receipt = (await res.json())["receipt"];
+                console.log(receipt);
+                $("#receipt").html(JSON.stringify(receipt));
+            })
+        })
+    </script>
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="row vh-100">
+            <div class="col-12 col-md-6 d-flex mx-auto">
+                <div class="flex-grow-1 my-3">
+                    <form method="POST" action="#" class="h-100" id="form">
+                        <div class="d-flex flex-column">
+                            <div class="form-group">
+                                <label for="ticket">
+                                    Tickets
+                                </label>
+                                <select id="ticket" class="form-control ">
+                                    <option value="" hidden disabled> --- </option>
+                                    {% for ticket in tickets %}
+                                        <option value="{{ ticket.id }}">{{ ticket.id }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-group flex-grow-1 d-flex flex-column">
+                                <label for="receipt">
+                                    Receipt
+                                </label>
+                                <textarea class="form-control flex-grow-1" id="receipt" rows="10"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <input type="submit" class="btn btn-primary"/>
+                                <a href="./" class="btn btn-link">Send message</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

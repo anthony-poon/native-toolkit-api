@@ -3,11 +3,17 @@
 {% block scripts %}
     <script>
         $(() => {
+            $("#channel").on("change", () => {
+                const val = $("#channel").val();
+                if (val === "_other") {
+                    $("#other").removeClass("d-none");
+                }
+            });
             $("#form").on("submit", async (evt) => {
                 evt.preventDefault();
-                console.log(evt);
                 const token = $("#token").val();
                 const message = $("#message").val();
+                const channelId = $("#channel").val() === "_other" ? $("#other").val() : $("#channel").val();
                 const res = await fetch("/api/notifications", {
                     method: "POST",
                     headers: {
@@ -15,7 +21,8 @@
                     },
                     body: JSON.stringify({
                         token,
-                        message
+                        message,
+                        channelId
                     })
                 });
             })
@@ -29,21 +36,37 @@
             <div class="col-12 col-md-6 d-flex mx-auto">
                 <div class="flex-grow-1 my-3">
                     <form method="POST" action="#" class="h-100" id="form">
-                        <div class="h-100 d-flex flex-column">
+                        <div class="d-flex flex-column">
                             <div class="form-group">
                                 <label for="token">
                                     Device Token
                                 </label>
-                                <input type="text" class="form-control" id="token" value="{{ token }}" disabled>
+                                <select id="token" class="form-control ">
+                                    {% for device in devices %}
+                                        <option value="{{ device.token }}">{{ device.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="channel">
+                                    Channel ID
+                                </label>
+                                <select id="channel" class="form-control ">
+                                    <option value="">Default</option>
+                                    <option value="message">Message</option>
+                                    <option value="_other">Other</option>
+                                </select>
+                                <input class="form-control d-none" id="other"/>
                             </div>
                             <div class="form-group flex-grow-1 d-flex flex-column">
                                 <label for="message">
                                     Message
                                 </label>
-                                <textarea class="form-control flex-grow-1" id="message"></textarea>
+                                <textarea class="form-control flex-grow-1" id="message" rows="10"></textarea>
                             </div>
                             <div class="form-group">
                                 <input type="submit" class="btn btn-primary"/>
+                                <a href="notifications/tickets" class="btn btn-link">View message receipts</a>
                             </div>
                         </div>
                     </form>
