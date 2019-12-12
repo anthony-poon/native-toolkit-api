@@ -46,14 +46,18 @@ router.post("/", async (req, res, next) => {
     const chunks = expo.chunkPushNotifications([msg]);
     try {
         const responses = await Promise.all(chunks.map(async (chunk) => await expo.sendPushNotificationsAsync(chunk)));
-        console.log(responses);
-        _.flatten(responses).forEach(res => tickets.push(res));
+        const ticket = responses[0][0];
+        tickets.push(ticket);
+        res.json({
+            status: "ok",
+            ticket
+        });
     } catch (e) {
         console.log(e);
+        res.json({
+            status: "error",
+        })
     }
-    res.json({
-        status: "OK"
-    })
 });
 
 router.get("/tickets", (req, res, next) => {
