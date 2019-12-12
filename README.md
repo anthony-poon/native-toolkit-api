@@ -1,3 +1,4 @@
+# API
 ## POST /api/notifications/tokens
 
 Register a push token. The push token will be saved in cache and available for use in /views/notifications
@@ -44,3 +45,12 @@ Return the status of a ticket
         receipt:    [Delievery Status returned by expo]
     }
 ```
+
+# Views
+## /views/notifications
+
+A simple testing tools to push notification to registered devices. If you registered a push token with `/api/notification/tokens`, it will be listed here
+
+## /views/notifications/tickets
+
+A simple testing tools to check delivery status all notification.
